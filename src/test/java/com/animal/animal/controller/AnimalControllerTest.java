@@ -46,8 +46,11 @@ class AnimalControllerTest {
 
         AnimalResponseModel animalResponseModel = animalController.getAnimal(createdAnimal.getPublicId());
         //then
-        Assertions.assertThat(animalResponseModel).isNotNull();
-        Assertions.assertThat(animalResponseModel).isEqualTo(new ModelMapper().map(createdAnimal,AnimalResponseModel.class));
+        Assertions.assertThat(animalResponseModel)
+                .isNotNull()
+                .isEqualTo(new ModelMapper().map(createdAnimal,AnimalResponseModel.class));
+
+
     }
 
     @DisplayName("test getAnimal when give invalid publicId then return Exception")
@@ -181,6 +184,8 @@ class AnimalControllerTest {
     @DisplayName("test deleteAnimal when give valid publicId then return valid id")
     @Test
     void testGiveValidPublicId_WhenCheckDeleteAnimal_ThenReturnValidId() {
+
+
         //give
 
         AnimalEntity animalEntity = new AnimalEntity();

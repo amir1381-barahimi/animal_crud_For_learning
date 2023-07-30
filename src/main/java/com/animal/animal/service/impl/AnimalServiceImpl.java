@@ -31,6 +31,7 @@ public class AnimalServiceImpl implements AnimalService {
         return modelMapper.map(savedAnimal,AnimalDto.class);
     }
 
+
     @Override
     public AnimalDto getAnimal(String publicId) {
         AnimalEntity animalEntity = animalRepository.findByPublicId(publicId);
