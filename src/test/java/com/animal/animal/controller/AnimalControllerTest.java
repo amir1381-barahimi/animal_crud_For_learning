@@ -6,7 +6,7 @@ import com.animal.animal.model.request.AnimalRequestModel;
 import com.animal.animal.model.response.AnimalDeleteResponseModel;
 import com.animal.animal.model.response.AnimalResponseModel;
 import com.animal.animal.service.AnimalService;
-import com.animal.animal.exception.AnimalException;
+import com.animal.animal.config.exception.AnimalException;
 import com.animal.animal.repository.AnimalRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;

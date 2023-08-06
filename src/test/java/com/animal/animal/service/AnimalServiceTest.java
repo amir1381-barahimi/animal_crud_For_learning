@@ -1,7 +1,7 @@
 package com.animal.animal.service;
 import com.animal.animal.model.dto.AnimalDto;
 import com.animal.animal.service.impl.AnimalServiceImpl;
-import com.animal.animal.exception.AnimalException;
+import com.animal.animal.config.exception.AnimalException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
