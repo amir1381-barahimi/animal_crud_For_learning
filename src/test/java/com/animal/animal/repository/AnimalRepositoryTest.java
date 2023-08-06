@@ -18,6 +18,7 @@ class AnimalRepositoryTest {
 
 
 
+
     //test findByPublicId
 
     @DisplayName("test finding exist valid entity by  publicId in db")

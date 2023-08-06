@@ -1,22 +1,44 @@
 package com.animal.animal.service;
+import com.animal.animal.util.generator.StringRandomGenerator;
 import com.animal.animal.model.dto.AnimalDto;
-import com.animal.animal.service.impl.AnimalServiceImpl;
+import com.animal.animal.model.entity.AnimalEntity;
+import com.animal.animal.repository.AnimalRepository;
 import com.animal.animal.exception.AnimalException;
+import com.animal.animal.service.impl.AnimalServiceImpl;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.Mockito.when;
+
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ExtendWith(MockitoExtension.class)
 class AnimalServiceTest {
 
-    @Autowired
-    private AnimalServiceImpl animalService;
+//    @Autowired
+//    private AnimalServiceImpl animalService;
+
+    @Mock
+    AnimalRepository animalRepository;
+
+    @InjectMocks
+    AnimalServiceImpl animalService;
+
+    @Mock
+    StringRandomGenerator publicIdGenerator;
+
+
 
 
     //test getALlAnimal
@@ -304,5 +326,33 @@ class AnimalServiceTest {
             animalService.updateAnimal(animalUpdate,UUID.randomUUID().toString());
         });
         org.assertj.core.api.Assertions.assertThat(exception.getMessage()).isEqualTo("animal with this publicId dont exist");
+    }
+
+    @DisplayName("kk")
+    @Test
+    void testGiven_When_Then() {
+        //give
+        String publicId = UUID.randomUUID().toString();
+
+        AnimalEntity animalEntity = new AnimalEntity();
+        animalEntity.setAge(3);
+        animalEntity.setName("in");
+        animalEntity.setType("gf");
+        animalEntity.setPublicId(publicId);
+        animalEntity.setId(0);
+
+        AnimalDto animalDto = new ModelMapper().map(animalEntity,AnimalDto.class);
+        animalDto.setPublicId(null);
+
+        //when
+
+        when(publicIdGenerator.publicIdGenerator()).thenReturn(publicId);
+        when(animalRepository.save(animalEntity)).thenReturn(animalEntity);
+        AnimalDto savedDto = animalService.createAnimal(animalDto);
+
+        //then
+        org.assertj.core.api.Assertions.assertThat(savedDto)
+                .isEqualTo(new ModelMapper().map(animalEntity,AnimalDto.class));
+
     }
 }
