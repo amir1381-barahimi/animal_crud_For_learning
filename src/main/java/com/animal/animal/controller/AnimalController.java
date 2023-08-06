@@ -4,6 +4,8 @@ import com.animal.animal.model.request.AnimalRequestModel;
 import com.animal.animal.model.response.AnimalDeleteResponseModel;
 import com.animal.animal.model.response.AnimalResponseModel;
 import com.animal.animal.service.AnimalService;
+import com.animal.animal.shared.MyApiResponse;
+import com.animal.animal.util.animalUtil.AnimalUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,7 +15,11 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -52,10 +58,11 @@ public class AnimalController {
             )
     })
     @GetMapping("/{publicId}")
-    public AnimalResponseModel getAnimal(@PathVariable String publicId){
+    public ResponseEntity<MyApiResponse> getAnimal(@PathVariable String publicId){
         logger.info("get a animal with publicId : "+publicId);
         AnimalDto animalDto = animalService.getAnimal(publicId);
-        return new ModelMapper().map(animalDto,AnimalResponseModel.class);
+        AnimalResponseModel animalResponseModel = new ModelMapper().map(animalDto,AnimalResponseModel.class);
+        return AnimalUtil.createResponse(animalResponseModel, HttpStatus.OK);
     }
 
     @Operation(summary = "getting all animals from database")
@@ -77,10 +84,11 @@ public class AnimalController {
             )
     })
     @GetMapping
-    public List<AnimalResponseModel> getAnimals(){
+    public ResponseEntity<MyApiResponse> getAnimals(){
         logger.info("get all animals");
         List<AnimalDto> animalDtos = animalService.getAllAnimal();
-        return animalDtos.stream().map(animalDto -> new ModelMapper().map(animalDto,AnimalResponseModel.class)).toList();
+        List<AnimalResponseModel> animalResponseModels =  animalDtos.stream().map(animalDto -> new ModelMapper().map(animalDto,AnimalResponseModel.class)).toList();
+        return AnimalUtil.createResponse(animalResponseModels,HttpStatus.OK);
     }
 
 
@@ -99,12 +107,13 @@ public class AnimalController {
             )
     })
     @PostMapping
-    public AnimalResponseModel createAnimal(@RequestBody AnimalRequestModel animalRequestModel){
+    public ResponseEntity<MyApiResponse> createAnimal(@RequestBody AnimalRequestModel animalRequestModel){
         logger.info("create a new animal");
         ModelMapper modelMapper = new ModelMapper();
         AnimalDto animalDto = modelMapper.map(animalRequestModel, AnimalDto.class);
         animalDto = animalService.createAnimal(animalDto);
-        return modelMapper.map(animalDto,AnimalResponseModel.class);
+        AnimalResponseModel animalResponseModel = modelMapper.map(animalDto,AnimalResponseModel.class);
+        return AnimalUtil.createResponse(animalResponseModel,HttpStatus.CREATED);
     }
     //delete
     @Operation(summary = "deleting a animal from database")
@@ -127,10 +136,11 @@ public class AnimalController {
     })
     @DeleteMapping("/{publicId}")
     @Transactional
-    public AnimalDeleteResponseModel deleteAnimal(@PathVariable String publicId){
+    public ResponseEntity<MyApiResponse> deleteAnimal(@PathVariable String publicId){
         logger.info("delete a animal with publicId : "+publicId);
         animalService.deleteAnimal(publicId);
-        return new AnimalDeleteResponseModel(publicId,"animal with publicId "+publicId+" deleted");
+        AnimalDeleteResponseModel animalDeleteResponseModel = new AnimalDeleteResponseModel(publicId,"animal with publicId "+publicId+" deleted");
+        return AnimalUtil.createResponse(animalDeleteResponseModel,HttpStatus.OK);
     }
     //update
 
@@ -153,11 +163,12 @@ public class AnimalController {
             )
     })
     @PutMapping("/{publicId}")
-    public AnimalResponseModel update(@RequestBody AnimalRequestModel animalRequestModel,@PathVariable String publicId){
+    public ResponseEntity<MyApiResponse> update(@RequestBody AnimalRequestModel animalRequestModel,@PathVariable String publicId){
         logger.info("update a animal with publicId : "+publicId);
         ModelMapper modelMapper = new ModelMapper();
         AnimalDto animalDto = modelMapper.map(animalRequestModel,AnimalDto.class);
         animalDto = animalService.updateAnimal(animalDto,publicId);
-        return modelMapper.map(animalDto,AnimalResponseModel.class);
+        AnimalResponseModel animalResponseModel = modelMapper.map(animalDto,AnimalResponseModel.class);
+        return AnimalUtil.createResponse(animalResponseModel,HttpStatus.OK);
     }
 }

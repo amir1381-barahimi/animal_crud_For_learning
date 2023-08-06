@@ -38,10 +38,29 @@ class AnimalServiceTest {
     @Mock
     StringRandomGenerator publicIdGenerator;
 
+    AnimalDto animalDto;
+    AnimalEntity animalEntity;
+
+
+
 
 
 
     //test getALlAnimal
+
+    @BeforeEach
+    void init(){
+        animalEntity = new AnimalEntity();
+        animalEntity.setName("fil");
+        animalEntity.setAge(34);
+        animalEntity.setType("pestandar");
+
+        animalDto = new AnimalDto();
+        animalDto.setName("fil");
+        animalDto.setAge(34);
+        animalDto.setType("pestandar");
+
+    }
 
     @DisplayName("test getAllAnimal when is empty then return exception")
     @Test
@@ -353,6 +372,17 @@ class AnimalServiceTest {
         //then
         org.assertj.core.api.Assertions.assertThat(savedDto)
                 .isEqualTo(new ModelMapper().map(animalEntity,AnimalDto.class));
+
+    }
+
+    @DisplayName("")
+    @Test
+    void test_GiveValidAnimalEntity_WhenCheckCreateAnimal_ThenReturnValidAnimalEntity() {
+        //give
+
+        //when
+
+        //then
 
     }
 }
