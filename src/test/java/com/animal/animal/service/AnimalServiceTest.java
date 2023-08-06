@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -40,6 +42,7 @@ class AnimalServiceTest {
 
     AnimalDto animalDto;
     AnimalEntity animalEntity;
+    String publicId;
 
 
 
@@ -60,6 +63,7 @@ class AnimalServiceTest {
         animalDto.setAge(34);
         animalDto.setType("pestandar");
 
+         publicId = UUID.randomUUID().toString();
     }
 
     @DisplayName("test getAllAnimal when is empty then return exception")
@@ -140,7 +144,7 @@ class AnimalServiceTest {
 
         //then
 
-        Assertions.assertThrowsExactly(DataIntegrityViolationException.class,()->{
+        Assertions.assertThrowsExactly(IllegalArgumentException.class,()->{
             //when
             animalService.createAnimal(animalDto);
         });
@@ -375,14 +379,64 @@ class AnimalServiceTest {
 
     }
 
-    @DisplayName("")
+    @DisplayName("test create animal when give valid animal dto then return valid animal dto")
     @Test
-    void test_GiveValidAnimalEntity_WhenCheckCreateAnimal_ThenReturnValidAnimalEntity() {
+    void test_GiveValidAnimalDto_WhenCheckCreateAnimal_ThenReturnValidAnimalDto() {
         //give
+        when(animalRepository.save(any())).thenReturn(animalEntity);
+        animalEntity.setId(0);
+        when(publicIdGenerator.publicIdGenerator()).thenReturn(publicId);
+        //when
+
+        AnimalDto savedAnimalDto = animalService.createAnimal(animalDto);
+        //then
+        org.assertj.core.api.Assertions.assertThat(savedAnimalDto).isEqualTo(animalDto);
+
+    }
+
+    @DisplayName("test createAnimal when give invalid animal dto then return exception")
+    @Test
+    void testGiveInvalidAnimalDto_WhenCheckCreateAnimal_ThenReturnAnimalException() {
+        //give
+        when(animalRepository.save(any())).thenReturn(new ClassCastException());
+        when(publicIdGenerator.publicIdGenerator()).thenReturn(publicId);
+        animalDto.setName(null);
+
+        //then
+        Assertions.assertThrows(ClassCastException.class,()->{
+            //when
+            AnimalDto savedAnimal = animalService.createAnimal(animalDto);
+        });
+
+    }
+
+    @DisplayName("test GetAnimal when give Valid exist publicId then return Valid animal dto")
+    @Test
+    void test_GiveNullAnimalDto_WhenCheckCreateAnimal_ThenReturnException() {
+        //give
+        when(animalRepository.findByPublicId(any())).thenReturn(animalEntity);
+        animalEntity.setId(0);
+        animalEntity.setPublicId(publicId);
+       animalDto.setPublicId(publicId);
 
         //when
 
+        AnimalDto savedAnimalDto = animalService.getAnimal(publicId);
         //then
+        org.assertj.core.api.Assertions.assertThat(savedAnimalDto).isEqualTo(animalDto);
+    }
 
+    @DisplayName("test getAnimal when give not exist publicId then return Animal Exception")
+    @Test
+    void test_GiveNotExistPublicId_WhenCheckGetAnimal_ThenAnimalException() {
+        //give
+        when(animalRepository.findByPublicId(any())).thenReturn(null);
+
+        //then
+        Exception exception = Assertions.assertThrowsExactly(AnimalException.class,()->{
+            //when
+            animalService.getAnimal(publicId);
+        });
+        org.assertj.core.api.Assertions.assertThat(exception.getMessage()).isEqualTo("Animal not exist");
     }
 }
