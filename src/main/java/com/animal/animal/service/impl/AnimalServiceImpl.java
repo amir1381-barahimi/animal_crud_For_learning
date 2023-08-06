@@ -7,11 +7,8 @@ import com.animal.animal.service.AnimalService;
 import com.animal.animal.config.exception.AnimalException;
 import com.animal.animal.repository.AnimalRepository;
 import org.modelmapper.ModelMapper;
-<<<<<<< HEAD
 import org.springframework.http.HttpStatus;
-=======
 import org.springframework.beans.factory.annotation.Autowired;
->>>>>>> 2f5bde7592b7070f7c75e54fe4435e422208cf3c
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -73,9 +70,9 @@ public class AnimalServiceImpl implements AnimalService {
         }
         if(animalDto.getName()!=null)
             findAnimal.setName(animalDto.getName());
-        if(animalDto.getAge()==)
+        if(animalDto.getAge()!=0)
             findAnimal.setAge(animalDto.getAge());
-        if()
+        if(animalDto.getType()!=null)
             findAnimal.setType(animalDto.getType());
         AnimalEntity updatedAnimalEntity = animalRepository.save(findAnimal);
         return new ModelMapper().map(updatedAnimalEntity,AnimalDto.class);

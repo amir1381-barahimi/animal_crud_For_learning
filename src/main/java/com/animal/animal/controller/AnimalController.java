@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/animals")
-@Tag(name = "AnimalApis",description = "Animal Api")
+@Tag(name = "Animals",description = "Animal endpoints")
 public class AnimalController {
     Logger logger = LoggerFactory.getLogger(AnimalController.class);
 
@@ -35,9 +35,21 @@ public class AnimalController {
     //get
     @Operation(summary = "getting a animal from database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = { @Content(mediaType = "application/json") }),
-            @ApiResponse(responseCode = "404"),
-            @ApiResponse(responseCode = "500")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Return a stored animal with valid publicId",
+                    content = {@Content(mediaType = "application/json"), @Content(mediaType = "application/xml")}
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Return Animal exception that not found",
+                    content = {@Content(mediaType = "application/json"), @Content(mediaType = "application/xml")}
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "animal Exception (AE), or when database IO exception occurred",
+                    content = {@Content(mediaType = "application/json"), @Content(mediaType = "application/xml")}
+            )
     })
     @GetMapping("/{publicId}")
     public AnimalResponseModel getAnimal(@PathVariable String publicId){
@@ -48,9 +60,21 @@ public class AnimalController {
 
     @Operation(summary = "getting all animals from database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = { @Content(mediaType = "application/json") }),
-            @ApiResponse(responseCode = "404"),
-            @ApiResponse(responseCode = "500")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Return all stored animal",
+                    content = {@Content(mediaType = "application/json"), @Content(mediaType = "application/xml")}
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Return Animal exception that any animal not found",
+                    content = {@Content(mediaType = "application/json"), @Content(mediaType = "application/xml")}
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "animal Exception (AE), or when database IO exception occurred",
+                    content = {@Content(mediaType = "application/json"), @Content(mediaType = "application/xml")}
+            )
     })
     @GetMapping
     public List<AnimalResponseModel> getAnimals(){
@@ -63,9 +87,16 @@ public class AnimalController {
     //post
     @Operation(summary = "Adding a new animal into database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = { @Content(mediaType = "application/json") }),
-            @ApiResponse(responseCode = "404"),
-            @ApiResponse(responseCode = "500")
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Return a stored animal with valid publicId",
+                    content = {@Content(mediaType = "application/json"), @Content(mediaType = "application/xml")}
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "animal Exception (AE), or when database IO exception occurred",
+                    content = {@Content(mediaType = "application/json"), @Content(mediaType = "application/xml")}
+            )
     })
     @PostMapping
     public AnimalResponseModel createAnimal(@RequestBody AnimalRequestModel animalRequestModel){
@@ -78,9 +109,21 @@ public class AnimalController {
     //delete
     @Operation(summary = "deleting a animal from database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = { @Content(mediaType = "application/json") }),
-            @ApiResponse(responseCode = "404"),
-            @ApiResponse(responseCode = "500")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "successfully has deleted",
+                    content = {@Content(mediaType = "application/json"), @Content(mediaType = "application/xml")}
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Return Animal exception that animal not found",
+                    content = {@Content(mediaType = "application/json"), @Content(mediaType = "application/xml")}
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "animal Exception (AE), or when database IO exception occurred",
+                    content = {@Content(mediaType = "application/json"), @Content(mediaType = "application/xml")}
+            )
     })
     @DeleteMapping("/{publicId}")
     @Transactional
@@ -93,9 +136,21 @@ public class AnimalController {
 
     @Operation(summary = "updating a animal from database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = { @Content(mediaType = "application/json") }),
-            @ApiResponse(responseCode = "404"),
-            @ApiResponse(responseCode = "500")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully has updated",
+                    content = {@Content(mediaType = "application/json"), @Content(mediaType = "application/xml")}
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Return Animal exception that animal not found",
+                    content = {@Content(mediaType = "application/json"), @Content(mediaType = "application/xml")}
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "animal Exception (AE), or when database IO exception occurred",
+                    content = {@Content(mediaType = "application/json"), @Content(mediaType = "application/xml")}
+            )
     })
     @PutMapping("/{publicId}")
     public AnimalResponseModel update(@RequestBody AnimalRequestModel animalRequestModel,@PathVariable String publicId){

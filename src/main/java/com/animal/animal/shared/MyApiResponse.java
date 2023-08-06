@@ -12,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Schema(name = "response",description = "general api response")
+@Schema(name = "response",description = "general animal api response")
 public class MyApiResponse {
 
     private boolean action;

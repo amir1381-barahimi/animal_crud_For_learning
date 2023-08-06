@@ -1,15 +1,10 @@
 package com.animal.animal.service;
 import com.animal.animal.util.generator.StringRandomGenerator;
 import com.animal.animal.model.dto.AnimalDto;
-<<<<<<< HEAD
 import com.animal.animal.service.impl.AnimalServiceImpl;
 import com.animal.animal.config.exception.AnimalException;
-=======
 import com.animal.animal.model.entity.AnimalEntity;
 import com.animal.animal.repository.AnimalRepository;
-import com.animal.animal.exception.AnimalException;
-import com.animal.animal.service.impl.AnimalServiceImpl;
->>>>>>> 2f5bde7592b7070f7c75e54fe4435e422208cf3c
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
