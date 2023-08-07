@@ -19,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -28,12 +27,15 @@ import java.util.List;
 public class AnimalController {
     Logger logger = LoggerFactory.getLogger(AnimalController.class);
 
+    private final AnimalUtil animalUtil;
+
     //injection
 
 
     private final AnimalService animalService;
 
-    public AnimalController(AnimalService animalService) {
+    public AnimalController(AnimalUtil animalUtil, AnimalService animalService) {
+        this.animalUtil = animalUtil;
         this.animalService = animalService;
     }
 
@@ -62,7 +64,7 @@ public class AnimalController {
         logger.info("get a animal with publicId : "+publicId);
         AnimalDto animalDto = animalService.getAnimal(publicId);
         AnimalResponseModel animalResponseModel = new ModelMapper().map(animalDto,AnimalResponseModel.class);
-        return AnimalUtil.createResponse(animalResponseModel, HttpStatus.OK);
+        return animalUtil.createResponse(animalResponseModel, HttpStatus.OK);
     }
 
     @Operation(summary = "getting all animals from database")
@@ -88,7 +90,7 @@ public class AnimalController {
         logger.info("get all animals");
         List<AnimalDto> animalDtos = animalService.getAllAnimal();
         List<AnimalResponseModel> animalResponseModels =  animalDtos.stream().map(animalDto -> new ModelMapper().map(animalDto,AnimalResponseModel.class)).toList();
-        return AnimalUtil.createResponse(animalResponseModels,HttpStatus.OK);
+        return animalUtil.createResponse(animalResponseModels,HttpStatus.OK);
     }
 
 
@@ -113,7 +115,7 @@ public class AnimalController {
         AnimalDto animalDto = modelMapper.map(animalRequestModel, AnimalDto.class);
         animalDto = animalService.createAnimal(animalDto);
         AnimalResponseModel animalResponseModel = modelMapper.map(animalDto,AnimalResponseModel.class);
-        return AnimalUtil.createResponse(animalResponseModel,HttpStatus.CREATED);
+        return animalUtil.createResponse(animalResponseModel,HttpStatus.CREATED);
     }
     //delete
     @Operation(summary = "deleting a animal from database")
@@ -140,7 +142,7 @@ public class AnimalController {
         logger.info("delete a animal with publicId : "+publicId);
         animalService.deleteAnimal(publicId);
         AnimalDeleteResponseModel animalDeleteResponseModel = new AnimalDeleteResponseModel(publicId,"animal with publicId "+publicId+" deleted");
-        return AnimalUtil.createResponse(animalDeleteResponseModel,HttpStatus.OK);
+        return animalUtil.createResponse(animalDeleteResponseModel,HttpStatus.OK);
     }
     //update
 
@@ -169,6 +171,6 @@ public class AnimalController {
         AnimalDto animalDto = modelMapper.map(animalRequestModel,AnimalDto.class);
         animalDto = animalService.updateAnimal(animalDto,publicId);
         AnimalResponseModel animalResponseModel = modelMapper.map(animalDto,AnimalResponseModel.class);
-        return AnimalUtil.createResponse(animalResponseModel,HttpStatus.OK);
+        return animalUtil.createResponse(animalResponseModel,HttpStatus.OK);
     }
 }

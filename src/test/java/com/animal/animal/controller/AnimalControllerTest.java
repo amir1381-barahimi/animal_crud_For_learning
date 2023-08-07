@@ -1,5 +1,6 @@
 package com.animal.animal.controller;
 
+import com.animal.animal.AnimalApplication;
 import com.animal.animal.model.dto.AnimalDto;
 import com.animal.animal.model.entity.AnimalEntity;
 import com.animal.animal.model.request.AnimalRequestModel;
@@ -8,29 +9,58 @@ import com.animal.animal.model.response.AnimalResponseModel;
 import com.animal.animal.service.AnimalService;
 import com.animal.animal.config.exception.AnimalException;
 import com.animal.animal.repository.AnimalRepository;
+import com.animal.animal.shared.MyApiResponse;
+import com.animal.animal.util.animalUtil.AnimalUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.io.UnsupportedEncodingException;
+import java.util.*;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
-@SpringBootTest
+@ContextConfiguration(classes= AnimalApplication.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@WebMvcTest(controllers = AnimalController.class)
 class AnimalControllerTest {
 
-    @Autowired
-    AnimalRepository animalRepository;
-    @Autowired
-    AnimalController animalController;
+    private String path="/animals";
 
     @Autowired
+    private MockMvc mockMvc;
+
+
+    @MockBean
     AnimalService animalService;
+
+    @MockBean
+    AnimalUtil animalUtil;
+
+//    @Autowired
+//    AnimalRepository animalRepository;
+//    @Autowired
+//    AnimalController animalController;
+//
+//    @Autowired
+//    AnimalService animalService;
 
     //test getAnimal
 
@@ -269,6 +299,69 @@ class AnimalControllerTest {
 //        });
 //        Assertions.assertThat(exception.getMessage()).isEqualTo("animal with this publicId dont exist");
 //    }
+
+
+    AnimalDto animalDto;
+
+    String publicId;
+
+
+    @BeforeEach
+    void init(){
+
+        publicId = UUID.randomUUID().toString();
+
+        animalDto = new AnimalDto();
+        animalDto.setName("fil");
+        animalDto.setAge(34);
+        animalDto.setType("pestandar");
+        animalDto.setPublicId(publicId);
+    }
+
+
+    @DisplayName("")
+    @Test
+    void testGiven_When_Then() throws Exception {
+        //give
+
+        AnimalRequestModel a = new AnimalRequestModel();
+        a.setName("fil");
+        a.setType("pestandar");
+        a.setAge(23);
+
+        AnimalResponseModel animalResponseModel = new ModelMapper().map(a,AnimalResponseModel.class);
+        animalResponseModel.setPublicId(publicId);
+
+        ResponseEntity<MyApiResponse> excepted = new ResponseEntity<>(new MyApiResponse(true,"",new Date(),animalResponseModel), HttpStatus.CREATED);
+
+
+
+
+        when(animalUtil.createResponse(any(),any())).thenReturn(excepted);
+        when(animalService.createAnimal(any())).thenReturn(animalDto);
+
+
+        //when
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .post(path)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(a))).andReturn();
+
+        String animalResponseAsString = mvcResult.getResponse().getContentAsString();
+        MyApiResponse myApiResponse = new ObjectMapper().readValue(animalResponseAsString,MyApiResponse.class);
+
+
+        //then
+        Assertions.assertThat(myApiResponse).isNotNull();
+        Assertions.assertThat(myApiResponse.isAction()).isTrue();
+        Assertions.assertThat(myApiResponse.getDate()).isEqualTo(excepted.getBody().getDate());
+        Assertions.assertThat(myApiResponse.getResult()).isNotNull();
+        Assertions.assertThat(new ModelMapper().map(myApiResponse.getResult(),AnimalResponseModel.class)).isEqualTo(animalResponseModel);
+
+
+
+    }
 
 
 
