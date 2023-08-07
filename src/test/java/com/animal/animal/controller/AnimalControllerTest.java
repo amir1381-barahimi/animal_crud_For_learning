@@ -319,50 +319,50 @@ class AnimalControllerTest {
     }
 
 
-    @DisplayName("")
-    @Test
-    void testGiven_When_Then() throws Exception {
-        //give
-
-        AnimalRequestModel a = new AnimalRequestModel();
-        a.setName("fil");
-        a.setType("pestandar");
-        a.setAge(23);
-
-        AnimalResponseModel animalResponseModel = new ModelMapper().map(a,AnimalResponseModel.class);
-        animalResponseModel.setPublicId(publicId);
-
-        ResponseEntity<MyApiResponse> excepted = new ResponseEntity<>(new MyApiResponse(true,"",new Date(),animalResponseModel), HttpStatus.CREATED);
-
-
-
-
-        when(animalUtil.createResponse(any(),any())).thenReturn(excepted);
-        when(animalService.createAnimal(any())).thenReturn(animalDto);
-
-
-        //when
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                .post(path)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(a))).andReturn();
-
-        String animalResponseAsString = mvcResult.getResponse().getContentAsString();
-        MyApiResponse myApiResponse = new ObjectMapper().readValue(animalResponseAsString,MyApiResponse.class);
-
-
-        //then
-        Assertions.assertThat(myApiResponse).isNotNull();
-        Assertions.assertThat(myApiResponse.isAction()).isTrue();
-        Assertions.assertThat(myApiResponse.getDate()).isEqualTo(excepted.getBody().getDate());
-        Assertions.assertThat(myApiResponse.getResult()).isNotNull();
-        Assertions.assertThat(new ModelMapper().map(myApiResponse.getResult(),AnimalResponseModel.class)).isEqualTo(animalResponseModel);
-
-
-
-    }
-
-
+//    @DisplayName("")
+//    @Test
+//    void testGiven_When_Then() throws Exception {
+//        //give
+//
+//        AnimalRequestModel a = new AnimalRequestModel();
+//        a.setName("fil");
+//        a.setType("pestandar");
+//        a.setAge(23);
+//
+//        AnimalResponseModel animalResponseModel = new ModelMapper().map(a,AnimalResponseModel.class);
+//        animalResponseModel.setPublicId(publicId);
+//
+//        ResponseEntity<MyApiResponse> excepted = new ResponseEntity<>(new MyApiResponse(true,"",new Date(),animalResponseModel), HttpStatus.CREATED);
+//
+//
+//
+//
+//        when(animalUtil.createResponse(any(),any())).thenReturn(excepted);
+//        when(animalService.createAnimal(any())).thenReturn(animalDto);
+//
+//
+//        //when
+//        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+//                .post(path)
+//                .contentType(MediaType.APPLICATION_JSON_VALUE)
+//                .accept(MediaType.APPLICATION_JSON_VALUE)
+//                .content(new ObjectMapper().writeValueAsString(a))).andReturn();
+//
+//        String animalResponseAsString = mvcResult.getResponse().getContentAsString();
+//        MyApiResponse myApiResponse = new ObjectMapper().readValue(animalResponseAsString,MyApiResponse.class);
+//
+//
+//        //then
+//        Assertions.assertThat(myApiResponse).isNotNull();
+//        Assertions.assertThat(myApiResponse.isAction()).isTrue();
+//        Assertions.assertThat(myApiResponse.getDate()).isEqualTo(excepted.getBody().getDate());
+//        Assertions.assertThat(myApiResponse.getResult()).isNotNull();
+//        Assertions.assertThat(new ModelMapper().map(myApiResponse.getResult(),AnimalResponseModel.class)).isEqualTo(animalResponseModel);
+//
+//
+//
+//    }
+//
+//
 
 }

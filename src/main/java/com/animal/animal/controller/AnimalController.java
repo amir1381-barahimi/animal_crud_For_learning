@@ -62,9 +62,7 @@ public class AnimalController {
     @GetMapping("/{publicId}")
     public ResponseEntity<MyApiResponse> getAnimal(@PathVariable String publicId){
         logger.info("get a animal with publicId : "+publicId);
-        AnimalDto animalDto = animalService.getAnimal(publicId);
-        AnimalResponseModel animalResponseModel = new ModelMapper().map(animalDto,AnimalResponseModel.class);
-        return animalUtil.createResponse(animalResponseModel, HttpStatus.OK);
+        return animalService.getAnimal(publicId);
     }
 
     @Operation(summary = "getting all animals from database")
@@ -88,9 +86,7 @@ public class AnimalController {
     @GetMapping
     public ResponseEntity<MyApiResponse> getAnimals(){
         logger.info("get all animals");
-        List<AnimalDto> animalDtos = animalService.getAllAnimal();
-        List<AnimalResponseModel> animalResponseModels =  animalDtos.stream().map(animalDto -> new ModelMapper().map(animalDto,AnimalResponseModel.class)).toList();
-        return animalUtil.createResponse(animalResponseModels,HttpStatus.OK);
+        return animalService.getAllAnimal();
     }
 
 
@@ -111,11 +107,7 @@ public class AnimalController {
     @PostMapping
     public ResponseEntity<MyApiResponse> createAnimal(@RequestBody AnimalRequestModel animalRequestModel){
         logger.info("create a new animal");
-        ModelMapper modelMapper = new ModelMapper();
-        AnimalDto animalDto = modelMapper.map(animalRequestModel, AnimalDto.class);
-        animalDto = animalService.createAnimal(animalDto);
-        AnimalResponseModel animalResponseModel = modelMapper.map(animalDto,AnimalResponseModel.class);
-        return animalUtil.createResponse(animalResponseModel,HttpStatus.CREATED);
+        return animalService.createAnimal(animalRequestModel);
     }
     //delete
     @Operation(summary = "deleting a animal from database")
@@ -140,9 +132,7 @@ public class AnimalController {
     @Transactional
     public ResponseEntity<MyApiResponse> deleteAnimal(@PathVariable String publicId){
         logger.info("delete a animal with publicId : "+publicId);
-        animalService.deleteAnimal(publicId);
-        AnimalDeleteResponseModel animalDeleteResponseModel = new AnimalDeleteResponseModel(publicId,"animal with publicId "+publicId+" deleted");
-        return animalUtil.createResponse(animalDeleteResponseModel,HttpStatus.OK);
+        return animalService.deleteAnimal(publicId);
     }
     //update
 
@@ -167,10 +157,6 @@ public class AnimalController {
     @PutMapping("/{publicId}")
     public ResponseEntity<MyApiResponse> update(@RequestBody AnimalRequestModel animalRequestModel,@PathVariable String publicId){
         logger.info("update a animal with publicId : "+publicId);
-        ModelMapper modelMapper = new ModelMapper();
-        AnimalDto animalDto = modelMapper.map(animalRequestModel,AnimalDto.class);
-        animalDto = animalService.updateAnimal(animalDto,publicId);
-        AnimalResponseModel animalResponseModel = modelMapper.map(animalDto,AnimalResponseModel.class);
-        return animalUtil.createResponse(animalResponseModel,HttpStatus.OK);
+        return animalService.updateAnimal(animalRequestModel,publicId);
     }
 }
