@@ -1,25 +1,18 @@
 package com.animal.animal.controller;
-import com.animal.animal.model.dto.AnimalDto;
 import com.animal.animal.model.request.AnimalRequestModel;
-import com.animal.animal.model.response.AnimalDeleteResponseModel;
-import com.animal.animal.model.response.AnimalResponseModel;
 import com.animal.animal.service.AnimalService;
 import com.animal.animal.shared.MyApiResponse;
-import com.animal.animal.util.animalUtil.AnimalUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/animals")
@@ -27,15 +20,11 @@ import java.util.List;
 public class AnimalController {
     Logger logger = LoggerFactory.getLogger(AnimalController.class);
 
-    private final AnimalUtil animalUtil;
-
     //injection
-
 
     private final AnimalService animalService;
 
-    public AnimalController(AnimalUtil animalUtil, AnimalService animalService) {
-        this.animalUtil = animalUtil;
+    public AnimalController(AnimalService animalService) {
         this.animalService = animalService;
     }
 

@@ -30,7 +30,7 @@ public class AnimalUtil {
         myApiResponse.setMessage("");
         myApiResponse.setResult(animalResponse);
 
-        return new ResponseEntity<MyApiResponse>(myApiResponse,httpStatus);
+        return new ResponseEntity<>(myApiResponse,httpStatus);
     }
 
     public AnimalDto convert(AnimalRequestModel animalRequestModel){

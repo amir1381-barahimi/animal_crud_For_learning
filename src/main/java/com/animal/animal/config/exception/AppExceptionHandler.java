@@ -37,6 +37,6 @@ public class AppExceptionHandler {
         response.setDate(new Date());
         response.setResult(new ArrayList<>());
 
-        return new ResponseEntity<Object>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

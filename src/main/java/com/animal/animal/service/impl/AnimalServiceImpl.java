@@ -23,7 +23,6 @@ public class AnimalServiceImpl implements AnimalService {
 
     //injection
 
-    ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
     private AnimalRepository animalRepository;
