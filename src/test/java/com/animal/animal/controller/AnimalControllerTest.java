@@ -8,7 +8,9 @@ import com.animal.animal.model.response.AnimalResponseModel;
 import com.animal.animal.service.AnimalService;
 import com.animal.animal.shared.MyApiResponse;
 import com.animal.animal.util.animalUtil.AnimalUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.bytebuddy.matcher.StringMatcher;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.modelmapper.ModelMapper;
@@ -24,6 +26,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -167,9 +170,34 @@ class AnimalControllerTest {
         Assertions.assertThat(myApiResponse.isAction()).isFalse();
     }
 
-    @DisplayName("test getAllAnimal then return Valid responseEntity")
+    @DisplayName("test getAllAnimal when give any then return inValid responseEntity")
     @Test
-    void testGiveAny_WhenCheckGetAllAnimal_ThenReturnValidResponseEntity() throws Exception {
+    void testGiveAny_WhenCheckGetAllAnimal_ThenReturnInValidResponseEntity() throws Exception {
+        //give
+        excepted.getBody().setResult("");
+        excepted.getBody().setAction(false);
+        excepted.getBody().setMessage("any user not exist");
+        when(animalService.getAllAnimal()).thenReturn(excepted);
+        //when
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .get(path)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(publicId))).andReturn();
+
+        String animalResponseAsString = mvcResult.getResponse().getContentAsString();
+        MyApiResponse myApiResponse = new ObjectMapper().readValue(animalResponseAsString, MyApiResponse.class);
+
+
+        //then
+        Assertions.assertThat(myApiResponse.getResult()).isNotNull();
+        Assertions.assertThat(myApiResponse.getResult()).isEqualTo("");
+        Assertions.assertThat(myApiResponse.isAction()).isFalse();
+    }
+
+    @DisplayName("test getAllAnimal when give valid Animal request model in database then return Valid responseEntity")
+    @Test
+    void testGiveAValidAnimalRequestModelToDatabase_WhenCheckGetAllAnimal_ThenReturnValidResponseEntity() throws Exception {
         //give
         List<AnimalResponseModel> animalResponseModels = new ArrayList<>();
         animalResponseModels.add(animalResponseModel);
@@ -185,24 +213,18 @@ class AnimalControllerTest {
 
         String animalResponseAsString = mvcResult.getResponse().getContentAsString();
         MyApiResponse myApiResponse = new ObjectMapper().readValue(animalResponseAsString, MyApiResponse.class);
-//        System.out.println(myApiResponse.getResult().getClass());
-        HashMap<String, String> map = (HashMap<String, String>) ((ArrayList) myApiResponse.getResult()).get(0);
-//        System.out.println(((ArrayList) myApiResponse.getResult()).get(0));
-//        System.out.println(Stream.of(myApiResponse.getResult()));
-//        ((ArrayList) myApiResponse.getResult()).stream().map(a->new ObjectMapper().readValue(a,AnimalResponseModel.class));
-//        map.get("age")
 
-//        System.out.println(map.entrySet());
-//        String json = new ObjectMapper().writeValueAsString(map);
-//        System.out.println(json);
-//        ArrayList<AnimalResponseModel> ar = new ArrayList<AnimalResponseModel>(map.values());
+        ArrayList result =(ArrayList) myApiResponse.getResult();
+        List resultConverted = result.stream().map(u->new ObjectMapper().convertValue(u,AnimalResponseModel.class)).toList();
+
         //then
         Assertions.assertThat(myApiResponse.getResult()).isNotNull();
         Assertions.assertThat(((ArrayList<?>) myApiResponse.getResult()).size()).isEqualTo(1);
-        Assertions.assertThat(map.entrySet()).isEqualTo(excepted.getBody().getResult());
-//        Assertions.assertThat().isEqualTo(animalResponseModels);
+        Assertions.assertThat(resultConverted).isEqualTo(animalResponseModels);
         Assertions.assertThat(myApiResponse.isAction()).isTrue();
     }
+
+
 
     @DisplayName("test deleteAnimal when give valid publicId then return valid ResponseEntity")
     @Test
